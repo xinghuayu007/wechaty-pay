@@ -78,13 +78,35 @@ async function onMessage (msg) {
   }
 }
 
-const bot = new Wechaty()
-
-bot.on('scan',    onScan)
-bot.on('login',   onLogin)
-bot.on('logout',  onLogout)
-bot.on('message', onMessage)
-
-bot.start()
-.then(() => console.log('Starter Bot Started.'))
-.catch(e => console.error(e))
+// const bot = new Wechaty()
+//
+// bot.on('scan',    onScan)
+// bot.on('login',   onLogin)
+// bot.on('logout',  onLogout)
+// bot.on('message', onMessage)l
+//
+// bot.start()
+// .then(
+//     () => console.log('Starter Bot Started.')
+// )
+// .catch(e => console.error(e))
+//
+// const http = require("http")
+// http.createServer(function(request, response) {
+//   bot.Room.find({topic: 'Order Update'}).then(
+//       (room) => {room.say("The Kooples 正在奥特莱斯，低至3折，网址：https://www.thekooples.com/fr_fr/outlet/femme/best-sellers.html，有喜欢的衣服，联系客服哈～")}
+//   )
+  // bot.sendMessage("wxid_svayfiqtmvhb21", "Robot says: Merry Woman's Day!")
+  // bot.Contact.find({name:"Yu破产保护中"}).then(
+  //     (contact) => {
+  //       contact.say("Robot says: Merry Woman's Day!")
+  //     }
+  // )
+  // bot.Contact.find({name:"崔向召"}).then(
+  //     (contact) => {
+  //       contact.say("It is a Wechat Robot")
+  //     }
+  // )
+//   bot.logout()
+//   response.end('success');
+// }).listen(8888)

@@ -22,6 +22,7 @@
   },
   "homepage": "https://github.com/coderwhocode/wechaty-pay#readme",
   "dependencies": {
+    "npm": "^8.5.3",
     "qrcode-terminal": "^0.12.0",
     "request": "^2.88.0",
     "wechaty": "^0.22.6"
