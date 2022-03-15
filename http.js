@@ -9,7 +9,7 @@ async function getOrderNotBuy() {
                 'content-type': 'application/json'
             },
         body: {
-            reqString: { order_status: '1', brand: 'sezane'},
+            reqString: { order_status: '1'},
             business: 'queryOrder'
         },
         json: true

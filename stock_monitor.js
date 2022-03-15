@@ -31,6 +31,64 @@ const scrawSezane = async function(url, size) {
     return false;
 }
 
+const scrawSandro = async function(url, size) {
+    // 启动浏览器
+    const browser = await puppeteer.launch({
+        headless: true,
+        args: ['--no-sandbox', '--disable-setuid-sandbox']
+    })
+    const page = await browser.newPage()
+    await page.goto(url, {timeout: 300000})
+    console.log("url"+url+" size:"+size)
+    let data = await page.evaluate(() => {
+        let list = document.querySelectorAll(".notinstock-attr, .remove-for-popin")
+        let res = []
+        for (let i = 0; i < list.length; i++) {
+            res.push({
+                name: list[i].className,
+                size: list[i].textContent.replaceAll("\n", "").substring(0, 1)
+            })
+        }
+        return res
+    })
+    for (var i = 0; i < data.length; i++) {
+        if (data[i].size == size && data[i].name.includes("remove-for-popin")) {
+            return true;
+        }
+    }
+    await browser.close()
+    return false;
+}
+
+const scrawMaje = async function(url, size) {
+    // 启动浏览器
+    const browser = await puppeteer.launch({
+        headless: true,
+        args: ['--no-sandbox', '--disable-setuid-sandbox']
+    })
+    const page = await browser.newPage()
+    await page.goto(url)
+
+    let data = await page.evaluate(() => {
+        let list = document.querySelectorAll(".swatches size > li")
+        let res = []
+        for (let i = 0; i < list.length; i++) {
+            res.push({
+                name: list[i].className,
+                size: list[i].textContent
+            })
+        }
+        return res
+    })
+    for (var i = 0; i < data.length; i++) {
+        if (data[i].size == size && !data[i].name.includes("is-disabled")) {
+            return true;
+        }
+    }
+    await browser.close()
+    return false;
+}
+
 async function monitorStock() {
     var ret = await httpHandler.getOrderNotBuy()
     var data = ret.split("##")
@@ -51,10 +109,27 @@ async function monitorStock() {
     var tail = "</table>\n" +
         "</body>\n" +
         "</html>";
+    var mailFlag = false;
     for (var i = 0; i < data.length - 1; i++) {
         var json = JSON.parse(data[i])
-        var res = await scrawSezane(json.link, json.size)
+        var brand = json.brand.toLowerCase();
+        console.log(brand)
+        var res;
+        switch (brand) {
+            case "sezane":
+                res = await scrawSezane(json.link, json.size);
+                break;
+            case "sandro":
+                res = await scrawSandro(json.link, json.size);
+                break;
+            case "maje":
+                res = await scrawMaje(json.link, json.size);
+                break;
+            default:
+                continue;
+        }
         if (res == true) {
+            mailFlag = true;
             head = head + "<tr border='1'>\n";
             head = head + "<td>" + json.customer_name + "</td>\n";
             head = head + "<td>" + json.brand + "</td>\n";
@@ -65,7 +140,10 @@ async function monitorStock() {
         }
     }
     var html = head + tail;
-    mainHandler.sendMail(html)
+    console.log(html)
+    if (mailFlag == true) {
+        // mainHandler.sendMail(html)
+    }
     console.log(res)
     return;
 }
