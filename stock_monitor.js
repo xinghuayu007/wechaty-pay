@@ -6,8 +6,8 @@ const scrawSezane = async function(url, size) {
     // 启动浏览器
     const browser = await puppeteer.launch({
         headless: true,
+        args: ['--no-sandbox', '--disable-setuid-sandbox']
     })
-    console.log("link:"+url+" size"+size)
     const page = await browser.newPage()
     await page.goto(url)
 
@@ -66,10 +66,16 @@ async function monitorStock() {
     }
     var html = head + tail;
     mainHandler.sendMail(html)
+    console.log(res)
     return;
 }
 
+function sleep(ms) {
+    return new Promise(resolve=>setTimeout(resolve, ms))
+}
+
 var data = monitorStock()
-data.then(function(result) {
+data.then(async function(result) {
+    await sleep(1500)
     process.exit(0)
 });

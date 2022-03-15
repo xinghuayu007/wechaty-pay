@@ -12,6 +12,7 @@ let transporter = nodemailer.createTransport({
 
 
 function sendMail(content) {
+    console.log(content)
     var mailOpt= {
         from: '1450306854@qq.com',
         to: '1450306854@qq.com;314056091@qq.com;358246832@qq.com;',
@@ -20,9 +21,11 @@ function sendMail(content) {
     };
     transporter.sendMail(mailOpt, (error, info) => {
         if (error) {
-            return console.log(error);
+            console.log(error);
+	        return error;
         }
         console.log('邮件已发送成功,邮件id: %s', info.messageId);
+        return true;
     });
 }
 
