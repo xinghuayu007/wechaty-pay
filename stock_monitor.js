@@ -22,7 +22,6 @@ const scrawSezane = async function(url, size) {
         }
         return res
     })
-    size = "32"
     for (var i = 0; i < data.length; i++) {
         if (data[i].size == size && !data[i].name.includes("is-disabled")) {
             return true;
