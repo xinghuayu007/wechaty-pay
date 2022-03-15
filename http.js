@@ -2,7 +2,7 @@ var request = require("request");
 
 async function getOrderNotBuy() {
     var options = { method: 'POST',
-        url: 'http://localhost:8080/sina_war/businessService',
+        url: 'http://122.51.6.22:8080/sina/businessService',
         headers:
             {
                 'cache-control': 'no-cache',
