@@ -39,7 +39,6 @@ const scrawSandro = async function(url, size) {
     })
     const page = await browser.newPage()
     await page.goto(url, {timeout: 300000})
-    console.log("url"+url+" size:"+size)
     let data = await page.evaluate(() => {
         let list = document.querySelectorAll(".notinstock-attr, .remove-for-popin")
         let res = []
@@ -52,7 +51,7 @@ const scrawSandro = async function(url, size) {
         return res
     })
     for (var i = 0; i < data.length; i++) {
-        if (data[i].size == size && data[i].name.includes("remove-for-popin")) {
+        if (data[i].size == size && !data[i].name.includes("notinstock-attr")) {
             return true;
         }
     }
@@ -68,20 +67,19 @@ const scrawMaje = async function(url, size) {
     })
     const page = await browser.newPage()
     await page.goto(url)
-
     let data = await page.evaluate(() => {
-        let list = document.querySelectorAll(".swatches size > li")
+        let list = document.querySelectorAll(".emptyswatch ")
         let res = []
         for (let i = 0; i < list.length; i++) {
             res.push({
                 name: list[i].className,
-                size: list[i].textContent
+                size: list[i].textContent.replaceAll("\n", "")
             })
         }
         return res
     })
     for (var i = 0; i < data.length; i++) {
-        if (data[i].size == size && !data[i].name.includes("is-disabled")) {
+        if (data[i].size == size && !data[i].name.includes("unselectable")) {
             return true;
         }
     }
@@ -113,17 +111,20 @@ async function monitorStock() {
     for (var i = 0; i < data.length - 1; i++) {
         var json = JSON.parse(data[i])
         var brand = json.brand.toLowerCase();
-        console.log(brand)
+        var link = json.link;
+        if (!link.includes("http")) {
+            continue;
+        }
         var res;
         switch (brand) {
             case "sezane":
-                res = await scrawSezane(json.link, json.size);
+                res = await scrawSezane(link, json.size);
                 break;
             case "sandro":
-                res = await scrawSandro(json.link, json.size);
+                res = await scrawSandro(link, json.size);
                 break;
             case "maje":
-                res = await scrawMaje(json.link, json.size);
+                res = await scrawMaje(link, json.size);
                 break;
             default:
                 continue;
@@ -140,11 +141,9 @@ async function monitorStock() {
         }
     }
     var html = head + tail;
-    console.log(html)
     if (mailFlag == true) {
-        // mainHandler.sendMail(html)
+       mainHandler.sendMail(html)
     }
-    console.log(res)
     return;
 }
 
