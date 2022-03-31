@@ -2,6 +2,36 @@ const puppeteer = require('puppeteer')
 var mainHandler = require('./mail')
 var httpHandler = require('./http')
 
+const scrawRouje = async function(url, size) {
+    // 启动浏览器
+    const browser = await puppeteer.launch({
+        headless: true,
+        args: ['--no-sandbox', '--disable-setuid-sandbox']
+    })
+    const page = await browser.newPage()
+    await page.goto(url, {timeout: 300000})
+    console.log("url:"+url+" size:"+size);
+    let data = await page.evaluate(() => {
+        let list = document.getElementsByClassName("swatch-option")
+        let res = []
+        for (let i = 0; i < list.length; i++) {
+            res.push({
+                name: list[i].className,
+                size: list[i].innerHTML
+            })
+        }
+        return res 
+    })
+    console.log(data)
+    for (var i = 0; i < data.length; i++) {
+        if (data[i].size == size && !data[i].name.includes("unavailable")) {
+            return true;
+        }
+    }
+    await browser.close()
+    return false;
+}
+
 const scrawSezane = async function(url, size) {
     // 启动浏览器
     const browser = await puppeteer.launch({
@@ -9,7 +39,7 @@ const scrawSezane = async function(url, size) {
         args: ['--no-sandbox', '--disable-setuid-sandbox']
     })
     const page = await browser.newPage()
-    await page.goto(url)
+    await page.goto(url, {timeout: 300000})
 
     let data = await page.evaluate(() => {
         let list = document.querySelectorAll(".c-size")
@@ -50,6 +80,7 @@ const scrawSandro = async function(url, size) {
         }
         return res
     })
+    console.log(data);
     for (var i = 0; i < data.length; i++) {
         if (data[i].size == size && !data[i].name.includes("notinstock-attr")) {
             return true;
@@ -66,7 +97,7 @@ const scrawMaje = async function(url, size) {
         args: ['--no-sandbox', '--disable-setuid-sandbox']
     })
     const page = await browser.newPage()
-    await page.goto(url)
+    await page.goto(url, {timeout: 300000})
     let data = await page.evaluate(() => {
         let list = document.querySelectorAll(".emptyswatch ")
         let res = []
@@ -125,6 +156,9 @@ async function monitorStock() {
                 break;
             case "maje":
                 res = await scrawMaje(link, json.size);
+                break;
+            case "rouje":
+                res = await scrawRouje(link, json.size);
                 break;
             default:
                 continue;
