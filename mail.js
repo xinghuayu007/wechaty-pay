@@ -5,7 +5,7 @@ let transporter = nodemailer.createTransport({
     secureConnection: true, // 使用了 SSL
     auth: {
         user: '1450306854@qq.com',
-        pass: 'huuransmgysaghbd',
+        pass: 'isdofbuvtalrbace',
     }
 });
 

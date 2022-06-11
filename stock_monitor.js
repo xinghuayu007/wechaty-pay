@@ -40,7 +40,7 @@ const scrawSezane = async function(url, size) {
     })
     const page = await browser.newPage()
     await page.goto(url, {timeout: 300000})
-
+    console.log(url)
     let data = await page.evaluate(() => {
         let list = document.querySelectorAll(".c-size")
         let res = []
@@ -52,6 +52,7 @@ const scrawSezane = async function(url, size) {
         }
         return res
     })
+    console.log(data)
     for (var i = 0; i < data.length; i++) {
         if (data[i].size == size && !data[i].name.includes("is-disabled")) {
             return true;
