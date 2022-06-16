@@ -50,6 +50,18 @@ const scrawSezane = async function(url, size) {
                 size: list[i].textContent
             })
         }
+        if (res.length > 0) return res
+        list = document.getElementsByTagName("button")
+        for (let i = 0; i < list.length; i++) {
+            if (list[i].className.indexOf("c-btn") >= 0 && 
+		list[i].className.indexOf("u-w-100") >= 0 &&
+		list[i].className.indexOf("u-mb-sm") >= 0) {
+            	res.push({
+                    name: list[i].className,
+                    size: list[i].textContent
+            	})
+	    }
+        }
         return res
     })
     console.log(data)
@@ -57,6 +69,7 @@ const scrawSezane = async function(url, size) {
         if (data[i].size == size && !data[i].name.includes("is-disabled")) {
             return true;
         }
+        if (data[i].size == "Ajouter au panier") return true
     }
     await browser.close()
     return false;

@@ -71,7 +71,7 @@ var main = async function () {
         urls.add(href.substring(s, e))
         order_table = order_table.substring(end+4)
     } 
-    
+    console.log(urls) 
     let order_map = new Map()
     for (var one of urls) {
         let detail_url = "http://fatao.majexpress.com/usercenter/" + one
