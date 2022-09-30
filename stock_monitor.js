@@ -32,6 +32,70 @@ const scrawRouje = async function(url, size) {
     return false;
 }
 
+const scrawCP = async function(url, size) {
+    // 启动浏览器
+    const browser = await puppeteer.launch({
+        headless: true,
+        args: ['--no-sandbox', '--disable-setuid-sandbox']
+    })
+    const page = await browser.newPage()
+    await page.goto(url, {timeout: 300000})
+    console.log("url:"+url+" size:"+size);
+    let data = await page.evaluate(() => {
+        let list = document.getElementsByClassName("emptyswatch")
+        let res = []
+        for (let i = 0; i < list.length; i++) {
+	    let size_data = list[i].innerHTML.split("title=\"")[1].split("\"")[0]
+            res.push({
+                name: list[i].className,
+                size: size_data
+            })
+        }
+        return res 
+    })
+    console.log(data)
+    for (var i = 0; i < data.length; i++) {
+        if (data[i].size == size && !data[i].name.includes("unavailable")) {
+            return true;
+        }
+    }
+    await browser.close()
+    return false;
+}
+
+const scrawBash = async function(url, size) {
+    // 启动浏览器
+    const browser = await puppeteer.launch({
+        headless: true,
+        args: ['--no-sandbox', '--disable-setuid-sandbox']
+    })
+    console.log("url:"+url+" size:"+size);
+    const page = await browser.newPage()
+    await page.goto(url, {timeout: 300000})
+    let data = await page.evaluate(() => {
+        let list = document.getElementsByClassName("js-Product-sizesRadio")
+        let res = []
+        for (let i = 0; i < list.length; i++) {
+            res.push({
+                name: list[i].className,
+                size: list[i].id
+            })
+        }
+        let size_list = document.getElementsByClassName("Product-sizesLabel")
+        for (let i = 0; i < size_list.length; i++) {
+            res[i]['size'] = size_list[i].innerHTML.trim()
+        }
+        return res 
+    })
+    for (var i = 0; i < data.length; i++) {
+        if (data[i].size == size && !data[i].name.includes("Product-sizesRadio--disabled")) {
+            return true;
+        }
+    }
+    await browser.close()
+    return false;
+}
+
 const scrawSezane = async function(url, size) {
     // 启动浏览器
     const browser = await puppeteer.launch({
@@ -160,10 +224,11 @@ async function monitorStock() {
         if (!link.includes("http")) {
             continue;
         }
-        var res;
+        var res = false;
+	console.log(brand)
         switch (brand) {
             case "sezane":
-                res = await scrawSezane(link, json.size);
+                //res = await scrawSezane(link, json.size);
                 break;
             case "sandro":
                 res = await scrawSandro(link, json.size);
@@ -173,6 +238,12 @@ async function monitorStock() {
                 break;
             case "rouje":
                 res = await scrawRouje(link, json.size);
+                break;
+            case "cp":
+                res = await scrawCP(link, json.size);
+                break;
+            case "ba-sh":
+                res = await scrawBash(link, json.size);
                 break;
             default:
                 continue;

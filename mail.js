@@ -15,7 +15,7 @@ function sendMail(content) {
     console.log(content)
     var mailOpt= {
         from: '1450306854@qq.com',
-        to: '1450306854@qq.com;314056091@qq.com;358246832@qq.com;',
+        to: '1450306854@qq.com;314056091@qq.com;358246832@qq.com;laurayang912912@sina.com;',
         subject: '官网补货通知',
         html: content
     };
