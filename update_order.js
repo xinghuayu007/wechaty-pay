@@ -156,12 +156,13 @@ var main = async function () {
     console.log(order_map)
     for (var key in order_map) {
         var dataObj = {}
+        if (key.length <= 1) continue
         dataObj['express_id'] = key
         dataObj['post_id'] = "已入库"
         dataObj['op_id'] = '1'
         reqString = JSON.stringify(dataObj)
         let res = await httpHandler.updateOrder(reqString)
-        console.log(res)
+        console.log("wangxixu:", key)
     }
     // 更新发货信息
     for (var key in express_map) {
@@ -172,7 +173,6 @@ var main = async function () {
         dataObj['op_id'] = '2'
         reqString = JSON.stringify(dataObj)
         let res = await httpHandler.updateOrder(reqString)
-        console.log(res)
     }
 }
 
