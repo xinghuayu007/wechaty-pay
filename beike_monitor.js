@@ -48,6 +48,9 @@ const scrawSaleData = async function(url) {
     var avg_price = data[0]['data'].replace("元/平米", "")
     var on_sale_num = data[1]['data'].replace("套", "")
     var saled_num = data[2]['data'].replace("套", "")
+    if (isNaN(Number(saled_num))) {
+        saled_num = -1
+    }
     var watch_times = data[3]['data'].replace("次", "")
     let sale_data = {
 	"avg_price": avg_price,
